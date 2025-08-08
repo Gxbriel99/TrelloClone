@@ -1,0 +1,222 @@
+<div class="flex flex-col min-h-screen">
+    <tool-bar></tool-bar>
+    <main
+        class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 p-2 overflow-y-scroll overflow-x-hidden md:overflow-x-auto scrollbar-hidden">
+        <!-- Card -->
+        <div *ngFor="let card of cards"
+            class="border border-base-300 p-1 flex flex-col items-center justify-center relative rounded dark:shadow-md">
+            <!-- Checkbox copre solo l’header -->
+            <input type="checkbox" class="peer absolute top-0 left-0 w-4/5 h-10 opacity-0 cursor-pointer z-1" />
+
+            <!-- Header cliccabile -->
+            <div
+                class="border-b border-yellow-400 h-10 transition-all duration-300 w-full flex items-center justify-center" [class.hidden]="editCardNameForm">
+                <p class="w-5/6 h-full flex items-center justify-start ps-2" #cardName>{{card.title}}</p>
+                <button
+                    class="px-2 m-1 text-lg bg-white bg-opacity-10 rounded text-white hover:text-slate-300 transition-all duration-300 flex item-center dark:hover:bg-slate-700 dark:hover:text-white dark:bg-slate-800 dark:text-slate-300"
+                    onclick="editCard.showModal()">
+                    <i class='bxr  bxs-dots-vertical-rounded rotate-90'></i>
+                </button>
+                
+            </div>
+            <div
+                class="border-b border-yellow-400 h-10 transition-all duration-300 w-full flex items-center justify-center" [class.hidden]="!editCardNameForm">
+                <input type="text" name="CardName" #newTitle placeholder="Nuovo nome..." class=" w-4/6 text-start text-black bg-transparent border border-base-300 rounded mx-1 p-1 z-10 dark:text-gray-950">
+                <div class="w-2/6 flex items-center justify-around">
+                    <button
+                        class="w-full mx-1 bg-red-500 bg-opacity-10 text-center text-red-500 hover:bg-red-500 hover:bg-opacity-1 hover:text-red-900 transition-colors duration-300 rounded p-1 z-20 closeCardName"
+                        >
+                        <i class='bxr bx-trash pointer-events-none'></i>
+                    </button>
+                
+                    <form method="post" action="" class="w-full" id="editCardTitle" (submit)="editCardTitle($event)">
+                        <button type="submit"
+                            class="w-full text-center bg-green-500 bg-opacity-10 text-green-500 hover:bg-opacity-1 hover:text-green-900 hover:bg-green-400 transition-colors duration-300 rounded p-1 peer peer-checked:hidden">
+                            <i class='bxr bx-check'></i>
+                        </button>
+                    </form>
+                </div>
+                
+            </div>
+
+            <!-- Contenuto animato scrollabile -->
+            <div
+                class=" border-green-600 w-full max-h-0 peer-checked:max-h-64 overflow-y-auto scrollbar-hidden transition-all duration-500 ease-in-out z-30">
+                <div class="flex flex-col w-full  ">
+                    <ul class="w-full" id="taskList">
+                        <li *ngFor="let item of card.task" class="flex items-center justify-between h-14 relative group">
+                            <!-- Testo + checkbox -->
+                            <p tabindex="0" class="w-5/6 h-full flex items-center justify-start text-lg ps-2 relative transition-all duration-300
+                                    group-hover:ps-8 group-focus-within:ps-8" [class.bg-green-500]="item.completed"
+                                [class.bg-opacity-10]="item.completed" [class.text-green-500]="item.completed"
+                                [class.line-through]="item.completed">
+                        
+                                <input type="checkbox" class="rounded-full checkbox absolute left-[-2.5rem] top-1/2 -translate-y-1/2 opacity-0 pointer-events-none
+                                          group-hover:left-0 group-hover:opacity-100 group-hover:pointer-events-auto
+                                          group-focus-within:left-1 group-focus-within:opacity-100 group-focus-within:pointer-events-auto
+                                          transition-all duration-300 ease-in-out" [checked]="item.completed" (change)="checkTask(item)" />
+                                {{ item.text }}
+                            </p>
+                        
+                            <!-- Bottone modifica -->
+                            <div class="w-1/6 h-full flex items-center justify-center">
+                                <button
+                                    class="px-2 m-1 text-lg bg-yellow-400 bg-opacity-10 rounded text-yellow-300 hover:bg-yellow-400 hover:text-yellow-900 transition-all duration-300">
+                                    <i class="bxr bx-edit"></i>
+                                </button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Contenitore bottone "Aggiungi Task"  -->
+            <div class="border-yellow-600 h-0 peer-checked:h-10 overflow-hidden transition-all duration-500 ease-in-out w-full z-30 flex items-center justify-center"
+                id="addTaskContainer" [class.hidden]="addTaskForm">
+                <button
+                    class="w-48 text-center text-gray-500 hover:bg-blue-400 hover:bg-opacity-10 hover:text-white transition-colors duration-300 rounded p-1 peer peer-checked:hidden"
+                    id="addTask" (click)="showTaskForm($event, card.idCard)">
+                    <i class='bxr bx-plus'></i>
+                    Aggiungi Task
+                </button>
+            </div>
+            
+            <!-- Contenitore form -->
+            <div class="border-yellow-600 h-0 peer-checked:h-10 overflow-hidden transition-all duration-500 ease-in-out w-full items-center justify-center"
+                id="addTaskFormContainer" [class.hidden]="!addTaskForm" [class.flex]="addTaskForm">
+            
+                <input type="text" placeholder="Scrivi un task..." name="taskText" #taskText
+                    class="w-4/6 text-start text-black dark:text-gray-950 bg-transparent border border-base-300 rounded mx-1 p-1" />
+
+            
+                <div class="w-2/6 flex items-center justify-around">
+                    <button
+                        class="w-full mx-1 bg-red-500 bg-opacity-10 text-center text-red-500 hover:bg-red-500 hover:bg-opacity-1 hover:text-red-900 transition-colors duration-300 rounded p-1 close"
+                        (click)="hideTaskForm($event,card.idCard)" >
+                        <i class='bxr bx-trash pointer-events-none'></i>
+                    </button>
+            
+                    <form method="post" action="" class="w-full" id="addTaskForm" (submit)="addTask($event)">
+                        <button type="submit"
+                            class="w-full text-center bg-green-500 bg-opacity-10 text-green-500 hover:bg-opacity-1 hover:text-green-900 hover:bg-green-400 transition-colors duration-300 rounded p-1">
+                            <i class='bxr bx-check'></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+
+
+<!-- Edit Card Modal -->
+<dialog id="editCard" class="modal " #cardModal>
+    <div class="modal-box p-2 scrollbar-hidden">
+        <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-lg">✕</button>
+        </form>
+        <br>
+        <ul class="menu menu-md rounded-box w-full scrollbar-hidden">
+            <li class="my-2">
+                <button
+                    class="border border-base-300 rounded-box p-6 font-normal flex justify-between text-base" (click)="renameCardName($event)" id="renameCard">Rename
+                    Card <i class='bxr  bxs-pen pe-1 pointer-events-none'></i>
+                </button>
+            </li>
+            <li class="my-2"><button
+                    class="border border-base-300 rounded-box p-6 font-normal flex justify-between text-base">Duplicate
+                    Card <i class='bxr  bxs-copy pe-1 bxs-pen pointer-events-none'></i></button></li>
+            <li class="my-2"><button
+                    class="border border-base-300 rounded-box p-6 font-normal flex justify-between text-base">Delete
+                    Card <i class='bxr  bxs-trash-x pe-1 bxs-pen pointer-events-none'></i></button></li>
+            <li>
+                <div class="collapse collapse-arrow border border-base-300 rounded-box ">
+                    <input type="checkbox" />
+                    <div class="collapse-title font-medium w-full">
+                        Change Color
+                    </div>
+                    <!-- Colori -->
+                    <div class="collapse-content grid grid-cols-3 lg:grid-cols-6 gap-2">
+                        <label>
+                            <input type="radio" name="color" class="peer hidden" />
+                            <div
+                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-gradient-to-b from-red-500 to-red-700 peer-checked:border-white transition-all">
+                            </div>
+                        </label>
+                        <label>
+                            <input type="radio" name="color" class="peer hidden" />
+                            <div
+                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-gradient-to-b from-orange-500 to-orange-700 peer-checked:border-white transition-all">
+                            </div>
+                        </label>
+                        <label>
+                            <input type="radio" name="color" class="peer hidden" />
+                            <div
+                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-gradient-to-b from-yellow-500 to-yellow-700 peer-checked:border-white transition-all">
+                            </div>
+                        </label>
+                        <label>
+                            <input type="radio" name="color" class="peer hidden" />
+                            <div
+                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-gradient-to-b from-lime-500 to-lime-700 peer-checked:border-white transition-all">
+                            </div>
+                        </label>
+                        <label>
+                            <input type="radio" name="color" class="peer hidden" />
+                            <div
+                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-gradient-to-b from-green-500 to-green-700 peer-checked:border-white transition-all">
+                            </div>
+                        </label>
+                        <label>
+                            <input type="radio" name="color" class="peer hidden" />
+                            <div
+                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-gradient-to-b from-teal-500 to-teal-700 peer-checked:border-white transition-all">
+                            </div>
+                        </label>
+                        <label>
+                            <input type="radio" name="color" class="peer hidden" />
+                            <div
+                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-gradient-to-b from-cyan-500 to-cyan-700 peer-checked:border-white transition-all">
+                            </div>
+                        </label>
+                        <label>
+                            <input type="radio" name="color" class="peer hidden" />
+                            <div
+                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-gradient-to-b from-blue-500 to-blue-700 peer-checked:border-white transition-all">
+                            </div>
+                        </label>
+                        <label>
+                            <input type="radio" name="color" class="peer hidden" />
+                            <div
+                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-gradient-to-b from-indigo-500 to-indigo-700 peer-checked:border-white transition-all">
+                            </div>
+                        </label>
+                        <label
+                            class="col-span-3 w-full h-11 rounded-lg border border-gray-400 flex items-center justify-center cursor-pointer">
+                            <input type="radio" name="color" class="peer hidden" />
+                            <div
+                                class="w-full h-full peer-checked:border-2 peer-checked:border-white transition-all rounded-lg flex items-center justify-center flex-col">
+                                <p>✕</p>
+                                <p>Remove Color</p>
+                            </div>
+                        </label>
+                    </div>
+
+                </div>
+            </li>
+        </ul>
+    </div>
+</dialog>
+
+<!-- Edit Task Modal -->
+<dialog id="editTask" class="modal scrollbar-hidden">
+    <div class="modal-box">
+        <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-lg">✕</button>
+        </form>
+        <h3 class="text-lg font-bold">Task!</h3>
+
+    </div>
+</dialog>
