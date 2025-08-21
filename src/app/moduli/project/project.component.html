@@ -1,7 +1,7 @@
 <div class="flex flex-col min-h-screen">
     <tool-bar></tool-bar>
     <main
-        class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 p-2 overflow-y-scroll overflow-x-hidden md:overflow-x-auto scrollbar-hidden">
+        class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 p-2 overflow-y-scroll overflow-x-hidden md:overflow-x-auto scrollbar-hidden items-start">
         <!-- Card -->
         <div *ngFor="let card of cards"
             class="border border-base-300 p-1 flex flex-col items-center justify-center relative rounded dark:shadow-md">
@@ -9,26 +9,27 @@
             <input type="checkbox" class="peer absolute top-0 left-0 w-4/5 h-10 opacity-0 cursor-pointer z-1" />
 
             <!-- Header cliccabile -->
-            <div
-                class="border-b border-yellow-400 h-10 transition-all duration-300 w-full flex items-center justify-center" [class.hidden]="editCardNameForm">
-                <p class="w-5/6 h-full flex items-center justify-start ps-2" #cardName>{{card.title}}</p>
+            <!-- HEADER NORMALE (titolo visibile se NON in edit) -->
+            <div class="border-b border-yellow-400 h-10 transition-all duration-300 w-full flex items-center justify-center"
+                [class.hidden]="card.idCard === editCardNameForm">
+                <p class="w-5/6 h-full flex items-center justify-start ps-2">{{card.title}}</p>
                 <button
                     class="px-2 m-1 text-lg bg-white bg-opacity-10 rounded text-white hover:text-slate-300 transition-all duration-300 flex item-center dark:hover:bg-slate-700 dark:hover:text-white dark:bg-slate-800 dark:text-slate-300"
-                    onclick="editCard.showModal()">
-                    <i class='bxr  bxs-dots-vertical-rounded rotate-90'></i>
+                    (click)="showEditCardModal(card.idCard)">
+                    <i class='bxr bxs-dots-vertical-rounded rotate-90'></i>
                 </button>
-                
             </div>
-            <div
-                class="border-b border-yellow-400 h-10 transition-all duration-300 w-full flex items-center justify-center" [class.hidden]="!editCardNameForm">
-                <input type="text" name="CardName" #newTitle placeholder="Nuovo nome..." class=" w-4/6 text-start text-black bg-transparent border border-base-300 rounded mx-1 p-1 z-10 dark:text-gray-950">
+            
+            <!-- HEADER EDIT (input visibile SOLO se la card è in edit) -->
+            <div class="border-b border-yellow-400 h-10 transition-all duration-300 w-full flex items-center justify-center"
+                [class.hidden]="card.idCard !== editCardNameForm">
+                <input type="text" name="CardName" #newTitle placeholder="Nuovo nome..."
+                    class="w-4/6 text-start text-black bg-transparent border border-base-300 rounded mx-1 p-1 z-10 dark:text-gray-950">
                 <div class="w-2/6 flex items-center justify-around">
                     <button
-                        class="w-full mx-1 bg-red-500 bg-opacity-10 text-center text-red-500 hover:bg-red-500 hover:bg-opacity-1 hover:text-red-900 transition-colors duration-300 rounded p-1 z-20 closeCardName"
-                        >
+                        class="w-full mx-1 bg-red-500 bg-opacity-10 text-center text-red-500 hover:bg-red-500 hover:bg-opacity-1 hover:text-red-900 transition-colors duration-300 rounded p-1 z-20 closeCardName">
                         <i class='bxr bx-trash pointer-events-none'></i>
                     </button>
-                
                     <form method="post" action="" class="w-full" id="editCardTitle" (submit)="editCardTitle($event)">
                         <button type="submit"
                             class="w-full text-center bg-green-500 bg-opacity-10 text-green-500 hover:bg-opacity-1 hover:text-green-900 hover:bg-green-400 transition-colors duration-300 rounded p-1 peer peer-checked:hidden">
@@ -36,8 +37,8 @@
                         </button>
                     </form>
                 </div>
-                
             </div>
+
 
             <!-- Contenuto animato scrollabile -->
             <div
@@ -72,7 +73,7 @@
 
             <!-- Contenitore bottone "Aggiungi Task"  -->
             <div class="border-yellow-600 h-0 peer-checked:h-10 overflow-hidden transition-all duration-500 ease-in-out w-full z-30 flex items-center justify-center"
-                id="addTaskContainer" [class.hidden]="addTaskForm">
+                [class.hidden]="card.showTaskForm" >
                 <button
                     class="w-48 text-center text-gray-500 hover:bg-blue-400 hover:bg-opacity-10 hover:text-white transition-colors duration-300 rounded p-1 peer peer-checked:hidden"
                     id="addTask" (click)="showTaskForm($event, card.idCard)">
@@ -83,7 +84,7 @@
             
             <!-- Contenitore form -->
             <div class="border-yellow-600 h-0 peer-checked:h-10 overflow-hidden transition-all duration-500 ease-in-out w-full items-center justify-center"
-                id="addTaskFormContainer" [class.hidden]="!addTaskForm" [class.flex]="addTaskForm">
+                #addTaskFormContainer  [class.hidden]="!card.showTaskForm" [class.flex]="card.showTaskForm" >
             
                 <input type="text" placeholder="Scrivi un task..." name="taskText" #taskText
                     class="w-4/6 text-start text-black dark:text-gray-950 bg-transparent border border-base-300 rounded mx-1 p-1" />
@@ -121,7 +122,7 @@
         <ul class="menu menu-md rounded-box w-full scrollbar-hidden">
             <li class="my-2">
                 <button
-                    class="border border-base-300 rounded-box p-6 font-normal flex justify-between text-base" (click)="renameCardName($event)" id="renameCard">Rename
+                    class="border border-base-300 rounded-box p-6 font-normal flex justify-between text-base" (click)="renameCardNameForm()" id="renameCard">Rename
                     Card <i class='bxr  bxs-pen pe-1 pointer-events-none'></i>
                 </button>
             </li>

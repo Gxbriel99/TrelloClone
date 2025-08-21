@@ -17,35 +17,97 @@ export class ProjectComponent implements OnInit {
   //------------------------------------//
 
   cards: Card[] = [
-    {'idCard': 1, 'title': 'Card 1', 'task': [
-      {'idTask': 1, 'date': new Date(), 'text': 'Fare la spesa', 'completed': false},
-      {'idTask': 2, 'date': new Date(), 'text': 'Andare in lavanderia', 'completed': true}
-    ], 'preferiti': false, 'creationDate': new Date()},
-    {'idCard': 2, 'title': 'Card 2', 'task': [], 'preferiti': false, 'creationDate': new Date()},
+    {
+      'idCard': 1, 'title': 'Card 1', 'task': [
+        { 'idTask': 1, 'date': new Date(), 'text': 'Fare la spesa', 'completed': false },
+        { 'idTask': 2, 'date': new Date(), 'text': 'Andare in lavanderia', 'completed': true }
+      ], 'preferiti': false, 'creationDate': new Date(), showTaskForm: false, hideTaskForm: false, editCardName: false
+    },
+    { 'idCard': 2, 'title': 'Card 2', 'task': [], 'preferiti': false, 'creationDate': new Date(), showTaskForm: false, hideTaskForm: false, editCardName: false },
   ]
 
   //-----------------------------------//
   //Logica di visualizzazione dei form
-  addTaskForm:boolean= false;
-  editCardNameForm:boolean= false;
 
+  /**
+   * Questa funzione gestisce la visualizzazione del form per aggiungere una task 
+   * @param e evento che scatenato la funzione
+   * @param cardId id della card su cui si vuole aggiungere la task
+   * Return il form per aggiungere una task alla card viene mostrato
+   */
   protected showTaskForm(e: Event, cardId: number) {
     const target = e.target as HTMLElement;
+    console.log('cardId', cardId);
 
-    if (target.id === 'addTask') this.addTaskForm = true;
-    if (target.id === 'renameCard') this.editCardNameForm= true;
+    this.cards.forEach(card => {
+      console.log('card', card);
+      if (card.idCard === cardId) {
+        card.showTaskForm = !card.showTaskForm;
+        //console.log('la card :', card.idCard, 'è quella selezionata, quindi il form viene mostrato');
+
+      } else {
+        card.showTaskForm = false;
+        //console.log('la card :', card.idCard, 'non è quella selezionata, quindi il form viene nascosto');
+      }
+    });
+
+
   }
 
+  /**
+   * questa funzione gestisce la chiusura del form per aggiungere una task
+   * @param e evento che scatenato la funzione
+   * @param cardId 
+   * Return il form per aggiungere una task vine nascosto
+   */
   protected hideTaskForm(e: Event, cardId: number) {
     const target = e.currentTarget as HTMLElement;
 
-    if (target.classList.contains('close')) this.addTaskForm = false;
-    if (target.classList.contains('closeCardName')) this.editCardNameForm = false;
+    this.cards.forEach(card => {
+      if (card.idCard === cardId) {
+        card.showTaskForm = false;
+        console.log('la card :', card.idCard, 'è quella selezionata, quindi il form viene nascosto');
+      }
+    });
 
+    // Rimuovo eventuale bordo rosso sull'input della card selezionata
     if (this.newTitleInput?.nativeElement?.classList.contains('border-red-600')) {
       this.newTitleInput.nativeElement.classList.remove('border-red-600');
     }
   }
+
+  selectedCardId: number | null = null;    // card su cui ho aperto il modal
+  editCardNameForm: number | null = null;  // card in cui mostrare il form
+
+  showEditCardModal(idCard: number) {
+    this.selectedCardId = idCard;
+    console.log('Selected Card ID:', this.selectedCardId);
+    const modal = document.getElementById("editCard") as HTMLDialogElement;
+    modal.showModal();
+  }
+
+  renameCardNameForm() {
+    console.log('selectedID:', this.selectedCardId);
+
+    if (this.selectedCardId !== null) {
+      console.log('id valido,procediamo con la modifica');
+      this.editCardNameForm = this.selectedCardId;   // imposto quale card deve mostrare il form
+      const modal = document.getElementById("editCard") as HTMLDialogElement;
+      modal.close();
+
+      // Aggiorno solo la card selezionata
+      this.cards.forEach(card => {
+        console.log('card:', card);
+        if(card.idCard=== this.selectedCardId) {
+          console.log('la card attivata è:', card);
+          card.editCardName = true; 
+        }else{
+          card.editCardName = false; 
+        }
+      });
+    }
+  }
+
 
   //-----------------------------------//
 
@@ -80,11 +142,7 @@ export class ProjectComponent implements OnInit {
   //Modale Della Card
   @ViewChild('cardModal') cardModal!: ElementRef<HTMLDialogElement>;
 
-  protected renameCardName(e: Event): void {
-    // Qui uso la proprietà, che Angular ha inizializzato, per chiudere il dialog
-    this.cardModal.nativeElement.close();
-    
-  }
+
 
   // nome attuale della card (paragrafo)
   @ViewChild('cardName') cardName!: ElementRef<HTMLParagraphElement>;
@@ -99,10 +157,10 @@ export class ProjectComponent implements OnInit {
     const newName = this.newTitleInput.nativeElement.value;
 
     //console.log('Nome prima della modifica:', oldName);
-   //console.log('Nuovo titolo inserito:', newName);
+    //console.log('Nuovo titolo inserito:', newName);
 
     if (newName) {
-      this.cardName.nativeElement.textContent = newName; 
+      this.cardName.nativeElement.textContent = newName;
       //this.editCardNameForm = false; 
     } else {
       console.warn('Nessun nuovo nome inserito.');
@@ -111,7 +169,7 @@ export class ProjectComponent implements OnInit {
   }
 
 
-
+  //-----------------------------------//
 
 
 
