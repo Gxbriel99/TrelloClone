@@ -1,7 +1,6 @@
 <div class="flex flex-col min-h-screen">
+    <!-- SEI NELLA BRANCHIA DEV-->
     <tool-bar></tool-bar>
-
-    <!-- Questo è un commento per vedere se funziona la brainch dev -->
     <main
         class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 p-2 overflow-y-scroll overflow-x-hidden md:overflow-x-auto scrollbar-hidden items-start">
         <!-- Card -->
@@ -11,7 +10,6 @@
             <input type="checkbox" class="peer absolute top-0 left-0 w-4/5 h-10 opacity-0 cursor-pointer z-1" />
 
             <!-- Header cliccabile -->
-            <!-- HEADER NORMALE (titolo visibile se NON in edit) -->
             <div class="border-b border-yellow-400 h-10 transition-all duration-300 w-full flex items-center justify-center"
                 [class.hidden]="card.idCard === editCardNameForm">
                 <p class="w-5/6 h-full flex items-center justify-start ps-2">{{card.title}}</p>
@@ -29,7 +27,8 @@
                     class="w-4/6 text-start text-black bg-transparent border border-base-300 rounded mx-1 p-1 z-10 dark:text-gray-950">
                 <div class="w-2/6 flex items-center justify-around">
                     <button
-                        class="w-full mx-1 bg-red-500 bg-opacity-10 text-center text-red-500 hover:bg-red-500 hover:bg-opacity-1 hover:text-red-900 transition-colors duration-300 rounded p-1 z-20 closeCardName">
+                        class="w-full mx-1 bg-red-500 bg-opacity-10 text-center text-red-500 hover:bg-red-500 hover:bg-opacity-1 hover:text-red-900 transition-colors duration-300 rounded p-1 z-20 closeCardName"
+                        (click)="hideForm($event,card.idCard)">
                         <i class='bxr bx-trash pointer-events-none'></i>
                     </button>
                     <form method="post" action="" class="w-full" id="editCardTitle" (submit)="editCardTitle($event)">
@@ -40,11 +39,9 @@
                     </form>
                 </div>
             </div>
-
-
+        
             <!-- Contenuto animato scrollabile -->
-            <div
-                class=" border-green-600 w-full max-h-0 peer-checked:max-h-64 overflow-y-auto scrollbar-hidden transition-all duration-500 ease-in-out z-30">
+            <div class=" border-green-600 w-full max-h-0 peer-checked:max-h-64 overflow-y-auto scrollbar-hidden transition-all duration-500 ease-in-out z-30">
                 <div class="flex flex-col w-full  ">
                     <ul class="w-full" id="taskList">
                         <li *ngFor="let item of card.task" class="flex items-center justify-between h-14 relative group">
@@ -78,7 +75,7 @@
                 [class.hidden]="card.showTaskForm" >
                 <button
                     class="w-48 text-center text-gray-500 hover:bg-blue-400 hover:bg-opacity-10 hover:text-white transition-colors duration-300 rounded p-1 peer peer-checked:hidden"
-                    id="addTask" (click)="showTaskForm($event, card.idCard)">
+                    id="addTask" (click)="showForm(card.idCard)">
                     <i class='bxr bx-plus'></i>
                     Aggiungi Task
                 </button>
@@ -95,7 +92,7 @@
                 <div class="w-2/6 flex items-center justify-around">
                     <button
                         class="w-full mx-1 bg-red-500 bg-opacity-10 text-center text-red-500 hover:bg-red-500 hover:bg-opacity-1 hover:text-red-900 transition-colors duration-300 rounded p-1 close"
-                        (click)="hideTaskForm($event,card.idCard)" >
+                        (click)="hideForm($event,card.idCard)" >
                         <i class='bxr bx-trash pointer-events-none'></i>
                     </button>
             
