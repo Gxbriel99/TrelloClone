@@ -9,10 +9,10 @@
             <!-- Checkbox copre solo l’header -->
             <input type="checkbox" class="peer absolute top-0 left-0 w-4/5 h-10 opacity-0 cursor-pointer z-1" />
 
-            <!-- Header cliccabile -->
+            <!-- Contenitore bottone modale "opzioni" -->
             <div class="border-b border-yellow-400 h-10 transition-all duration-300 w-full flex items-center justify-center"
                 [class.hidden]="card.idCard === editCardNameForm">
-                <p class="w-5/6 h-full flex items-center justify-start ps-2">{{card.title}}</p>
+                <p class="w-5/6 h-full flex items-center justify-start ps-2" #oldTitle >{{card.title}}</p>
                 <button
                     class="px-2 m-1 text-lg bg-white bg-opacity-10 rounded text-white hover:text-slate-300 transition-all duration-300 flex item-center dark:hover:bg-slate-700 dark:hover:text-white dark:bg-slate-800 dark:text-slate-300"
                     (click)="showEditCardModal(card.idCard)">
@@ -20,18 +20,18 @@
                 </button>
             </div>
             
-            <!-- HEADER EDIT (input visibile SOLO se la card è in edit) -->
+            <!-- form "Edit Card Name"-->
             <div class="border-b border-yellow-400 h-10 transition-all duration-300 w-full flex items-center justify-center"
                 [class.hidden]="card.idCard !== editCardNameForm">
                 <input type="text" name="CardName" #newTitle placeholder="Nuovo nome..."
-                    class="w-4/6 text-start text-black bg-transparent border border-base-300 rounded mx-1 p-1 z-10 dark:text-gray-950">
+                    class="w-4/6 text-start text-gray-500 bg-transparent border border-base-300 rounded mx-1 p-1 z-10 ">
                 <div class="w-2/6 flex items-center justify-around">
                     <button
                         class="w-full mx-1 bg-red-500 bg-opacity-10 text-center text-red-500 hover:bg-red-500 hover:bg-opacity-1 hover:text-red-900 transition-colors duration-300 rounded p-1 z-20 closeCardName"
-                        (click)="hideForm($event,card.idCard)">
+                        (click)="hideForm(card.idCard)">
                         <i class='bxr bx-trash pointer-events-none'></i>
                     </button>
-                    <form method="post" action="" class="w-full" id="editCardTitle" (submit)="editCardTitle($event)">
+                    <form method="post" action="" class="w-full" id="editCardTitle" (submit)="editCardTitle($event,card.idCard,newTitle.value)">
                         <button type="submit"
                             class="w-full text-center bg-green-500 bg-opacity-10 text-green-500 hover:bg-opacity-1 hover:text-green-900 hover:bg-green-400 transition-colors duration-300 rounded p-1 peer peer-checked:hidden">
                             <i class='bxr bx-check'></i>
@@ -81,26 +81,25 @@
                 </button>
             </div>
             
-            <!-- Contenitore form -->
+            <!-- form "Aggiungi Task" -->
             <div class="border-yellow-600 h-0 peer-checked:h-10 overflow-hidden transition-all duration-500 ease-in-out w-full items-center justify-center"
                 #addTaskFormContainer  [class.hidden]="!card.showTaskForm" [class.flex]="card.showTaskForm" >
-            
-                <input type="text" placeholder="Scrivi un task..." name="taskText" #taskText
-                    class="w-4/6 text-start text-black dark:text-gray-950 bg-transparent border border-base-300 rounded mx-1 p-1" />
 
-            
-                <div class="w-2/6 flex items-center justify-around">
-                    <button
-                        class="w-full mx-1 bg-red-500 bg-opacity-10 text-center text-red-500 hover:bg-red-500 hover:bg-opacity-1 hover:text-red-900 transition-colors duration-300 rounded p-1 close"
-                        (click)="hideForm($event,card.idCard)" >
-                        <i class='bxr bx-trash pointer-events-none'></i>
-                    </button>
-            
-                    <form method="post" action="" class="w-full" id="addTaskForm" (submit)="addTask($event)">
-                        <button type="submit"
-                            class="w-full text-center bg-green-500 bg-opacity-10 text-green-500 hover:bg-opacity-1 hover:text-green-900 hover:bg-green-400 transition-colors duration-300 rounded p-1">
-                            <i class='bxr bx-check'></i>
-                        </button>
+                <div class="w-full h-full flex items-center justify-center">
+                    <form id="addTaskForm" (submit)="addTask($event,card.idCard,taskText.value)" class="flex items-center justify-center w-full">
+                        <input type="text" placeholder="Scrivi un task..." #taskText 
+                            class="w-4/6 text-start text-gray-500 bg-transparent border border-base-300 rounded mx-1 p-1" />
+                        <div class="w-2/6 flex items-center justify-center">
+                            <button type="button"
+                                class="w-full mx-1 bg-red-500 bg-opacity-10 text-center text-red-500 hover:bg-red-500 hover:bg-opacity-1 hover:text-red-900 transition-colors duration-300 rounded p-1"
+                                (click)="hideForm(card.idCard)">
+                                <i class='bxr bx-trash pointer-events-none'></i>
+                            </button>
+                            <button type="submit"
+                                class="w-full text-center bg-green-500 bg-opacity-10 text-green-500 hover:bg-opacity-1 hover:text-green-900 hover:bg-green-400 transition-colors duration-300 rounded p-1">
+                                <i class='bxr bx-check'></i>
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>

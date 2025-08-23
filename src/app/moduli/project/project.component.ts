@@ -39,7 +39,7 @@ export class ProjectComponent implements OnInit {
     //console.log('cardId', cardId);
 
     this.cards.forEach(card => {
-      console.log('card', card);
+      //console.log('card', card);
       if (card.idCard === cardId) {
         //form di aggiunta task
         if (!card.showTaskForm) card.showTaskForm = !card.showTaskForm;
@@ -57,21 +57,16 @@ export class ProjectComponent implements OnInit {
    * @param cardId 
    * Return il form per aggiungere una task vine nascosto
    */
-  protected hideForm(e: Event, cardId: number) {
-    const target = e.currentTarget as HTMLElement;
-    console.log('target', target);
-
+  protected hideForm(cardId: number) {
     this.cards.forEach(card => {
       if (card.idCard === cardId) {
         //form di aggiunta task
         if (card.showTaskForm) card.showTaskForm = false; 
         //form di modifica nome card
-        else if (this.editCardNameForm === cardId) this.editCardNameForm = null;
-
+        else if (this.editCardNameForm === cardId) this.editCardNameForm = null; 
+       
       }
     });
-
-   
   }
 
   //-----------------------------------//
@@ -82,13 +77,13 @@ export class ProjectComponent implements OnInit {
 
   showEditCardModal(idCard: number) {
     this.selectedCardId = idCard;
-    console.log('Selected Card ID:', this.selectedCardId);
+    //console.log('Selected Card ID:', this.selectedCardId);
     const modal = document.getElementById("editCard") as HTMLDialogElement;
     modal.showModal();
   }
 
   renameCardNameForm() {
-    console.log('selectedID:', this.selectedCardId);
+    //console.log('selectedID:', this.selectedCardId);
 
     if (this.selectedCardId !== null) {
       //console.log('id valido,procediamo con la modifica');
@@ -100,7 +95,7 @@ export class ProjectComponent implements OnInit {
       this.cards.forEach(card => {
         //console.log('card:', card);
         if (card.idCard === this.selectedCardId) {
-          console.log('la card attivata è:', card);
+          //console.log('la card attivata è:', card);
           card.editCardName = true;
         } else {
           card.editCardName = false;
@@ -111,28 +106,33 @@ export class ProjectComponent implements OnInit {
 
 
   //-----------------------------------//
-
-  //Input per il testo del task
-  @ViewChild('taskText') taskText!: ElementRef<HTMLInputElement>;
-
-  taskArray: Task[] = []
   idIncrement: number = 0;
 
-  protected addTask(e: Event): void {
+  protected addTask(e:Event,idCard:number,taskText:string): void {
     e.preventDefault();
-    const task: string = this.taskText.nativeElement.value;
-    if (task) {
-      this.taskArray.push({
-        idTask: this.idIncrement++,         // un id unico usando timestamp
-        date: new Date(),       // data attuale
-        text: task,             // il testo preso dall'input
-        completed: false        // di default non completata
-      });
-      console.log(this.taskArray)
-      this.taskText.nativeElement.value = '';
-    }
+    const task = taskText.trim()
+    //console.log('idCard:',idCard)
+    //console.log('task:',task)
+    this.cards.forEach(card => {
+      if (card.idCard === idCard) {
+        // Creo la nuova task
+        const newTask: Task = {
+          idTask: this.idIncrement++,
+          text: task,
+          date: new Date(),
+          completed: false
+        };
 
+        // Aggiungo la task alla card
+        card.task.push(newTask);
+        // Qui svuoto il campo input tramite TS
+        (e.target as HTMLFormElement).reset();
+      }
+    });
+
+    
   }
+
 
   //funzione per assegnare la task come completata
   protected checkTask(task: Task): void {
@@ -140,34 +140,27 @@ export class ProjectComponent implements OnInit {
   }
   //-----------------------------------//
 
-  //Modale Della Card
-  @ViewChild('cardModal') cardModal!: ElementRef<HTMLDialogElement>;
+  @ViewChild('oldTitle') oldTitle!: ElementRef<HTMLParagraphElement>;
+  
 
-
-
-  // nome attuale della card (paragrafo)
-  @ViewChild('cardName') cardName!: ElementRef<HTMLParagraphElement>;
-
-  // input per il nuovo nome della card
-  @ViewChild('newTitle') newTitleInput!: ElementRef<HTMLInputElement>;
-
-  protected editCardTitle(e: Event): void {
+  protected editCardTitle(e: Event, idCard:number ,newTitle:string): void {
     e.preventDefault();
 
-    const oldName = this.cardName.nativeElement.textContent;
-    const newName = this.newTitleInput.nativeElement.value;
+    const oldName = this.oldTitle.nativeElement.textContent; 
+    const newName = newTitle;
 
-    //console.log('Nome prima della modifica:', oldName);
-    //console.log('Nuovo titolo inserito:', newName);
+    console.log('Nome prima della modifica:', oldName);
+    console.log('Nuovo titolo inserito:', newName);
 
-    if (newName) {
-      this.cardName.nativeElement.textContent = newName;
-      //this.editCardNameForm = false; 
-    } else {
-      console.warn('Nessun nuovo nome inserito.');
-      this.newTitleInput.nativeElement.classList.add('border-red-600')
-    }
+    this.cards.forEach(card => {
+      if(card.idCard===idCard){
+        card.title = newName
+        this.hideForm(idCard)
+      }
+    });
   }
+
+
 
 
   //-----------------------------------//
