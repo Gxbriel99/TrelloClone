@@ -26,7 +26,8 @@ export class ProjectComponent implements OnInit {
     { 'idCard': 2, 'title': 'Card 2', 'task': [], 'preferiti': false, 'creationDate': new Date(), showTaskForm: false, hideTaskForm: false, editCardName: false },
   ]
 
-  //-----------------------------------//
+  selectedCardId: number | null = null;   
+
   //Logica di visualizzazione dei form
 
   /**
@@ -38,7 +39,7 @@ export class ProjectComponent implements OnInit {
   protected showForm(cardId: number) {
     //console.log('cardId', cardId);
 
-    this.cards.forEach(card => {
+    this.cards.find(card => {
       //console.log('card', card);
       if (card.idCard === cardId) {
         //form di aggiunta task
@@ -58,7 +59,7 @@ export class ProjectComponent implements OnInit {
    * Return il form per aggiungere una task vine nascosto
    */
   protected hideForm(cardId: number) {
-    this.cards.forEach(card => {
+    this.cards.find(card => {
       if (card.idCard === cardId) {
         //form di aggiunta task
         if (card.showTaskForm) card.showTaskForm = false; 
@@ -69,103 +70,100 @@ export class ProjectComponent implements OnInit {
     });
   }
 
-  //-----------------------------------//
-  //Logica dei form
-
-  selectedCardId: number | null = null;    // card su cui ho aperto il modal
   editCardNameForm: number | null = null;  // card in cui mostrare il form
 
-  showEditCardModal(idCard: number) {
-    this.selectedCardId = idCard;
-    //console.log('Selected Card ID:', this.selectedCardId);
-    const modal = document.getElementById("editCard") as HTMLDialogElement;
-    modal.showModal();
-  }
-
-  renameCardNameForm() {
+  protected renameCardNameForm() {
     //console.log('selectedID:', this.selectedCardId);
-
     if (this.selectedCardId !== null) {
-      //console.log('id valido,procediamo con la modifica');
       this.editCardNameForm = this.selectedCardId;   // imposto quale card deve mostrare il form
-      const modal = document.getElementById("editCard") as HTMLDialogElement;
-      modal.close();
-
       // Aggiorno solo la card selezionata
-      this.cards.forEach(card => {
-        //console.log('card:', card);
-        if (card.idCard === this.selectedCardId) {
-          //console.log('la card attivata è:', card);
-          card.editCardName = true;
-        } else {
-          card.editCardName = false;
-        }
-      });
+      const card = this.cards.find(card => card.idCard === this.selectedCardId);
+
+      if (card) card.editCardName = true;
+      else card!.editCardName = false;
+
     }
   }
 
-
   //-----------------------------------//
-  idIncrement: number = 0;
+  //Logica dei form
 
-  protected addTask(e:Event,idCard:number,taskText:string): void {
+  /**
+   * Questa funzione gestisce l'inserimento di una nuova task nell'array TASK[] della card selezionata
+   * @param e evento
+   * @param idCard id della card in cui voglio inserire la task
+   * @param taskText task da aggiungere
+   * 
+   * Return la task viene aggiunta all' array TASK[] della card selezionata(con id inventato)
+   */
+
+  protected addTask(e: Event, idCard: number, taskText: string): void {
     e.preventDefault();
-    const task = taskText.trim()
-    //console.log('idCard:',idCard)
-    //console.log('task:',task)
-    this.cards.forEach(card => {
-      if (card.idCard === idCard) {
-        // Creo la nuova task
-        const newTask: Task = {
-          idTask: this.idIncrement++,
-          text: task,
-          date: new Date(),
-          completed: false
-        };
 
-        // Aggiungo la task alla card
-        card.task.push(newTask);
-        // Qui svuoto il campo input tramite TS
-        (e.target as HTMLFormElement).reset();
-      }
-    });
+    let idIncrement: number = 0; // contatore interno(Sto simulando solo FE tramite un array)
 
-    
+    const task = taskText.trim();
+
+    const card = this.cards.find(card => card.idCard === idCard);
+
+    const newTask: Task = {
+      idTask: idIncrement++,
+      text: task,
+      date: new Date(),
+      completed: false
+    };
+
+    if (card) card.task.push(newTask);  // Aggiungi la task all'array della card se esiste
+
+    // Svuota il campo input
+    (e.target as HTMLFormElement).reset();
+
+    //console.log(this.cards);
   }
 
+  /**
+   * Questa funzione aggiorna il nome della card selezionata
+   * @param e evento
+   * @param idCard id della card da rinominare
+   * @param newTitle nuovo nome della card
+   * 
+   * return la card con il nome aggiornato nell'array cards(da aggiungere la logica degli errori)
+   */
+  protected editCardTitle(e: Event, idCard: number, newTitle: string): void {
+    e.preventDefault();
+    const newName = newTitle;
 
+    const card= this.cards.find(card=>card.idCard===idCard)
+
+    if (card) card.title = newName
+    this.hideForm(idCard)
+  }
+  
+  //-----------------------------------//
+  //Logica dei modal
+
+  protected duplicateCard(): void {
+     let nextCardId:number = 3; // contatore interno(parto da 3 perche in questa versione sto simulando le card dal frontend)
+    if (this.selectedCardId !== null) {
+      const card = this.cards.find(card => card.idCard === this.selectedCardId);
+      if (card) {
+        const newCard = {
+          ...card,                           // copia tutte le proprietà
+          idCard: nextCardId++         // nuovo id 
+        };
+
+        this.cards.push(newCard);
+        console.log(this.cards)
+      }
+    }
+  }
+
+  //-----------------------------------//
+  //Logica dei Checked 
+  
   //funzione per assegnare la task come completata
   protected checkTask(task: Task): void {
     task.completed = !task.completed;
   }
-  //-----------------------------------//
-
-  @ViewChild('oldTitle') oldTitle!: ElementRef<HTMLParagraphElement>;
   
-
-  protected editCardTitle(e: Event, idCard:number ,newTitle:string): void {
-    e.preventDefault();
-
-    const oldName = this.oldTitle.nativeElement.textContent; 
-    const newName = newTitle;
-
-    console.log('Nome prima della modifica:', oldName);
-    console.log('Nuovo titolo inserito:', newName);
-
-    this.cards.forEach(card => {
-      if(card.idCard===idCard){
-        card.title = newName
-        this.hideForm(idCard)
-      }
-    });
-  }
-
-
-
-
-  //-----------------------------------//
-
-
-
-
 }

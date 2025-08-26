@@ -12,10 +12,10 @@
             <!-- Contenitore bottone modale "opzioni" -->
             <div class="border-b border-yellow-400 h-10 transition-all duration-300 w-full flex items-center justify-center"
                 [class.hidden]="card.idCard === editCardNameForm">
-                <p class="w-5/6 h-full flex items-center justify-start ps-2" #oldTitle >{{card.title}}</p>
+                <p class="w-5/6 h-full flex items-center justify-start ps-2" >{{card.title}}</p>
                 <button
                     class="px-2 m-1 text-lg bg-white bg-opacity-10 rounded text-white hover:text-slate-300 transition-all duration-300 flex item-center dark:hover:bg-slate-700 dark:hover:text-white dark:bg-slate-800 dark:text-slate-300"
-                    (click)="showEditCardModal(card.idCard)">
+                    (click)="selectedCardId = card.idCard; editCard.showModal()">
                     <i class='bxr bxs-dots-vertical-rounded rotate-90'></i>
                 </button>
             </div>
@@ -111,7 +111,7 @@
 
 
 <!-- Edit Card Modal -->
-<dialog id="editCard" class="modal " #cardModal>
+<dialog #editCard class="modal " >
     <div class="modal-box p-2 scrollbar-hidden">
         <form method="dialog">
             <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-lg">✕</button>
@@ -120,13 +120,16 @@
         <ul class="menu menu-md rounded-box w-full scrollbar-hidden">
             <li class="my-2">
                 <button
-                    class="border border-base-300 rounded-box p-6 font-normal flex justify-between text-base" (click)="renameCardNameForm()" id="renameCard">Rename
+                    class="border border-base-300 rounded-box p-6 font-normal flex justify-between text-base" (click)="editCard.close();renameCardNameForm()" id="renameCard">Rename
                     Card <i class='bxr  bxs-pen pe-1 pointer-events-none'></i>
                 </button>
             </li>
-            <li class="my-2"><button
+            <li class="my-2">
+                <button (click)="editCard.close();duplicateCard()"
                     class="border border-base-300 rounded-box p-6 font-normal flex justify-between text-base">Duplicate
-                    Card <i class='bxr  bxs-copy pe-1 bxs-pen pointer-events-none'></i></button></li>
+                    Card <i class='bxr  bxs-copy pe-1 bxs-pen pointer-events-none'></i>
+                </button>
+            </li>
             <li class="my-2"><button
                     class="border border-base-300 rounded-box p-6 font-normal flex justify-between text-base">Delete
                     Card <i class='bxr  bxs-trash-x pe-1 bxs-pen pointer-events-none'></i></button></li>
