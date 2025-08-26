@@ -9,8 +9,9 @@ export class Card {
     editCardName: boolean = false;
     hideTaskForm: boolean = false;
     showTaskForm: boolean = false;
+    cardColor:string|null
 
-    constructor(idCard: number, title: string, task: Task[], preferiti: boolean, creationDate: Date, showTaskForm: boolean = false, hideTaskForm: boolean = false, editCardName: boolean = false) {
+    constructor(idCard: number, title: string, task: Task[], preferiti: boolean, creationDate: Date, showTaskForm: boolean = false, hideTaskForm: boolean = false, editCardName: boolean = false,cardColor:string|null) {
         this.idCard = idCard;
         this.title = title;
         this.task = task;   
@@ -19,5 +20,6 @@ export class Card {
         this.showTaskForm = showTaskForm;
         this.hideTaskForm = hideTaskForm;
         this.editCardName = editCardName;
+        this.cardColor=cardColor
     }
 }

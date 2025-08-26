@@ -4,7 +4,7 @@
     <main
         class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 p-2 overflow-y-scroll overflow-x-hidden md:overflow-x-auto scrollbar-hidden items-start">
         <!-- Card -->
-        <div *ngFor="let card of cards"
+        <div *ngFor="let card of cards" [ngClass]="card.cardColor ? card.cardColor : 'bg-none'"
             class="border border-base-300 p-1 flex flex-col items-center justify-center relative rounded dark:shadow-md">
             <!-- Checkbox copre solo l’header -->
             <input type="checkbox" class="peer absolute top-0 left-0 w-4/5 h-10 opacity-0 cursor-pointer z-1" />
@@ -48,7 +48,8 @@
                             <!-- Testo + checkbox -->
                             <p tabindex="0" class="w-5/6 h-full flex items-center justify-start text-lg ps-2 relative transition-all duration-300
                                     group-hover:ps-8 group-focus-within:ps-8" [class.bg-green-500]="item.completed"
-                                [class.bg-opacity-10]="item.completed" [class.text-green-500]="item.completed"
+                                [class.bg-opacity-10]="item.completed" [class.decoration-green-500]="item.completed"
+                                [class.decoration-3]="item.completed"
                                 [class.line-through]="item.completed">
                         
                                 <input type="checkbox" class="rounded-full checkbox absolute left-[-2.5rem] top-1/2 -translate-y-1/2 opacity-0 pointer-events-none
@@ -130,9 +131,12 @@
                     Card <i class='bxr  bxs-copy pe-1 bxs-pen pointer-events-none'></i>
                 </button>
             </li>
-            <li class="my-2"><button
+            <li class="my-2">
+                <button (click)="editCard.close();deleteCard()"
                     class="border border-base-300 rounded-box p-6 font-normal flex justify-between text-base">Delete
-                    Card <i class='bxr  bxs-trash-x pe-1 bxs-pen pointer-events-none'></i></button></li>
+                    Card <i class='bxr  bxs-trash-x pe-1 bxs-pen pointer-events-none'></i>
+                </button>
+            </li>
             <li>
                 <div class="collapse collapse-arrow border border-base-300 rounded-box ">
                     <input type="checkbox" />
@@ -141,63 +145,82 @@
                     </div>
                     <!-- Colori -->
                     <div class="collapse-content grid grid-cols-3 lg:grid-cols-6 gap-2">
+                        <!-- Rosso -->
                         <label>
-                            <input type="radio" name="color" class="peer hidden" />
+                            <input type="radio" name="color" class="peer hidden" (change)="editCard.close();changeColor('bg-red-900')" />
                             <div
-                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-gradient-to-b from-red-500 to-red-700 peer-checked:border-white transition-all">
+                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-red-500 peer-checked:border-white transition-all">
                             </div>
                         </label>
+                    
+                        <!-- Arancione -->
                         <label>
-                            <input type="radio" name="color" class="peer hidden" />
+                            <input type="radio" name="color" class="peer hidden" (change)="editCard.close();changeColor('bg-orange-900')" />
                             <div
-                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-gradient-to-b from-orange-500 to-orange-700 peer-checked:border-white transition-all">
+                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-orange-500 peer-checked:border-white transition-all">
                             </div>
                         </label>
+                    
+                        <!-- Giallo -->
                         <label>
-                            <input type="radio" name="color" class="peer hidden" />
+                            <input type="radio" name="color" class="peer hidden" (change)="editCard.close();changeColor('bg-yellow-600')" />
                             <div
-                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-gradient-to-b from-yellow-500 to-yellow-700 peer-checked:border-white transition-all">
+                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-yellow-500 peer-checked:border-white transition-all">
                             </div>
                         </label>
+                    
+                        <!-- Lime -->
                         <label>
-                            <input type="radio" name="color" class="peer hidden" />
+                            <input type="radio" name="color" class="peer hidden" (change)="editCard.close();changeColor('bg-lime-900')" />
                             <div
-                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-gradient-to-b from-lime-500 to-lime-700 peer-checked:border-white transition-all">
+                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-lime-500 peer-checked:border-white transition-all">
                             </div>
                         </label>
+                    
+                        <!-- Verde -->
                         <label>
-                            <input type="radio" name="color" class="peer hidden" />
+                            <input type="radio" name="color" class="peer hidden" (change)="editCard.close();changeColor('bg-green-900')" />
                             <div
-                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-gradient-to-b from-green-500 to-green-700 peer-checked:border-white transition-all">
+                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-green-500 peer-checked:border-white transition-all">
                             </div>
                         </label>
+                    
+                        <!-- Teal -->
                         <label>
-                            <input type="radio" name="color" class="peer hidden" />
+                            <input type="radio" name="color" class="peer hidden" (change)="editCard.close();changeColor('bg-teal-900')" />
                             <div
-                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-gradient-to-b from-teal-500 to-teal-700 peer-checked:border-white transition-all">
+                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-teal-500 peer-checked:border-white transition-all">
                             </div>
                         </label>
+                    
+                        <!-- Cyan -->
                         <label>
-                            <input type="radio" name="color" class="peer hidden" />
+                            <input type="radio" name="color" class="peer hidden" (change)="editCard.close();changeColor('bg-cyan-900')" />
                             <div
-                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-gradient-to-b from-cyan-500 to-cyan-700 peer-checked:border-white transition-all">
+                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-cyan-500 peer-checked:border-white transition-all">
                             </div>
                         </label>
+                    
+                        <!-- Blu -->
                         <label>
-                            <input type="radio" name="color" class="peer hidden" />
+                            <input type="radio" name="color" class="peer hidden" (change)="editCard.close();changeColor('bg-blue-900')" />
                             <div
-                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-gradient-to-b from-blue-500 to-blue-700 peer-checked:border-white transition-all">
+                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-blue-500 peer-checked:border-white transition-all">
                             </div>
                         </label>
+                    
+                        <!-- Indigo -->
                         <label>
-                            <input type="radio" name="color" class="peer hidden" />
+                            <input type="radio" name="color" class="peer hidden" (change)="editCard.close();changeColor('bg-indigo-900')" />
                             <div
-                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-gradient-to-b from-indigo-500 to-indigo-700 peer-checked:border-white transition-all">
+                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-indigo-500 peer-checked:border-white transition-all">
                             </div>
                         </label>
+                    
+                        <!-- Remove Color -->
                         <label
                             class="col-span-3 w-full h-11 rounded-lg border border-gray-400 flex items-center justify-center cursor-pointer">
-                            <input type="radio" name="color" class="peer hidden" />
+                            <input type="radio" name="color" class="peer hidden" (change)="editCard.close();changeColor('')" />
                             <div
                                 class="w-full h-full peer-checked:border-2 peer-checked:border-white transition-all rounded-lg flex items-center justify-center flex-col">
                                 <p>✕</p>
@@ -205,6 +228,7 @@
                             </div>
                         </label>
                     </div>
+
 
                 </div>
             </li>

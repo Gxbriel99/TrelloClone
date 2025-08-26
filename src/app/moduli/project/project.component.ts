@@ -18,13 +18,32 @@ export class ProjectComponent implements OnInit {
 
   cards: Card[] = [
     {
-      'idCard': 1, 'title': 'Card 1', 'task': [
-        { 'idTask': 1, 'date': new Date(), 'text': 'Fare la spesa', 'completed': false },
-        { 'idTask': 2, 'date': new Date(), 'text': 'Andare in lavanderia', 'completed': true }
-      ], 'preferiti': false, 'creationDate': new Date(), showTaskForm: false, hideTaskForm: false, editCardName: false
+      idCard: 1,
+      title: 'Card 1',
+      task: [
+        { idTask: 1, date: new Date(), text: 'Fare la spesa', completed: false },
+        { idTask: 2, date: new Date(), text: 'Andare in lavanderia', completed: true }
+      ],
+      preferiti: false,
+      creationDate: new Date(),
+      showTaskForm: false,
+      hideTaskForm: false,
+      editCardName: false,
+      cardColor: null
     },
-    { 'idCard': 2, 'title': 'Card 2', 'task': [], 'preferiti': false, 'creationDate': new Date(), showTaskForm: false, hideTaskForm: false, editCardName: false },
-  ]
+    {
+      idCard: 2,
+      title: 'Card 2',
+      task: [],
+      preferiti: false,
+      creationDate: new Date(),
+      showTaskForm: false,
+      hideTaskForm: false,
+      editCardName: false,
+      cardColor: null
+    },
+  ];
+
 
   selectedCardId: number | null = null;   
 
@@ -104,7 +123,8 @@ export class ProjectComponent implements OnInit {
 
     const task = taskText.trim();
 
-    const card = this.cards.find(card => card.idCard === idCard);
+        const card:Card= this.cards.find(card => card.idCard === this.selectedCardId)!
+
 
     const newTask: Task = {
       idTask: idIncrement++,
@@ -133,7 +153,7 @@ export class ProjectComponent implements OnInit {
     e.preventDefault();
     const newName = newTitle;
 
-    const card= this.cards.find(card=>card.idCard===idCard)
+    const card: Card = this.cards.find(card => card.idCard === this.selectedCardId)!
 
     if (card) card.title = newName
     this.hideForm(idCard)
@@ -145,11 +165,14 @@ export class ProjectComponent implements OnInit {
   protected duplicateCard(): void {
      let nextCardId:number = 3; // contatore interno(parto da 3 perche in questa versione sto simulando le card dal frontend)
     if (this.selectedCardId !== null) {
-      const card = this.cards.find(card => card.idCard === this.selectedCardId);
+      const card: Card = this.cards.find(card => card.idCard === this.selectedCardId)!
       if (card) {
         const newCard = {
           ...card,                           // copia tutte le proprietà
-          idCard: nextCardId++         // nuovo id 
+          idCard: nextCardId++,             // nuovo id 
+          showTaskForm: false,
+          hideTaskForm: false, 
+          editCardName: false
         };
 
         this.cards.push(newCard);
@@ -158,9 +181,31 @@ export class ProjectComponent implements OnInit {
     }
   }
 
+  protected deleteCard(): void {
+    if (this.selectedCardId === null) return;
+
+    console.log('idCard:', this.selectedCardId);
+
+    // Rimuovo la card selezionata
+    this.cards = this.cards.filter(card => card.idCard !== this.selectedCardId);
+
+    console.log('cards aggiornate:', this.cards);
+
+    // Reset del selectedCardId
+    this.selectedCardId = null;
+  }
+
+  
+  protected changeColor(color: string|null) {
+    console.log('colore:', color);
+    const card = this.cards.find(card => card.idCard === this.selectedCardId);
+    if (card) card.cardColor = color; 
+    else card!.cardColor=null
+  }
+
   //-----------------------------------//
   //Logica dei Checked 
-  
+
   //funzione per assegnare la task come completata
   protected checkTask(task: Task): void {
     task.completed = !task.completed;
