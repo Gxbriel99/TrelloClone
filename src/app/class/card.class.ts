@@ -4,7 +4,7 @@ export class Card {
     idCard: number;
     title: string;
     task: Task[];          
-    preferiti: boolean;
+    preferiti?: boolean;
     creationDate: Date;
     editCardName: boolean = false;
     hideTaskForm: boolean = false;

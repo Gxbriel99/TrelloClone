@@ -21,10 +21,10 @@ export class ProjectComponent implements OnInit {
       idCard: 1,
       title: 'Card 1',
       task: [
-        { idTask: 1, date: new Date(), text: 'Fare la spesa', completed: false },
-        { idTask: 2, date: new Date(), text: 'Andare in lavanderia', completed: true }
+        { idTask: 1, date: new Date(), text: 'Fare la spesa', completed: true },
+        { idTask: 2, date: new Date(), text: 'Andare in lavanderia', completed: false },
+        { idTask: 3, date: new Date(), text: 'prendere i bambini', completed: true }
       ],
-      preferiti: false,
       creationDate: new Date(),
       showTaskForm: false,
       hideTaskForm: false,
@@ -35,7 +35,6 @@ export class ProjectComponent implements OnInit {
       idCard: 2,
       title: 'Card 2',
       task: [],
-      preferiti: false,
       creationDate: new Date(),
       showTaskForm: false,
       hideTaskForm: false,
@@ -122,8 +121,11 @@ export class ProjectComponent implements OnInit {
     let idIncrement: number = 0; // contatore interno(Sto simulando solo FE tramite un array)
 
     const task = taskText.trim();
+    //console.log('task:', task)
 
-        const card:Card= this.cards.find(card => card.idCard === this.selectedCardId)!
+    const card:Card= this.cards.find(card => card.idCard === this.selectedCardId)!
+
+    //console.log('card',card)
 
 
     const newTask: Task = {
@@ -197,7 +199,7 @@ export class ProjectComponent implements OnInit {
 
   
   protected changeColor(color: string|null) {
-    console.log('colore:', color);
+    //console.log('colore:', color);
     const card = this.cards.find(card => card.idCard === this.selectedCardId);
     if (card) card.cardColor = color; 
     else card!.cardColor=null

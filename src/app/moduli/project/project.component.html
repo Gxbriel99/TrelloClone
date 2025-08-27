@@ -4,7 +4,7 @@
     <main
         class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 p-2 overflow-y-scroll overflow-x-hidden md:overflow-x-auto scrollbar-hidden items-start">
         <!-- Card -->
-        <div *ngFor="let card of cards" [ngClass]="card.cardColor ? card.cardColor : 'bg-none'"
+        <div *ngFor="let card of cards" [ngClass]="card.cardColor ? card.cardColor : 'bg-none'" (click)="selectedCardId = card.idCard;"
             class="border border-base-300 p-1 flex flex-col items-center justify-center relative rounded dark:shadow-md">
             <!-- Checkbox copre solo l’header -->
             <input type="checkbox" class="peer absolute top-0 left-0 w-4/5 h-10 opacity-0 cursor-pointer z-1" />
@@ -46,23 +46,29 @@
                     <ul class="w-full" id="taskList">
                         <li *ngFor="let item of card.task" class="flex items-center justify-between h-14 relative group">
                             <!-- Testo + checkbox -->
-                            <p tabindex="0" class="w-5/6 h-full flex items-center justify-start text-lg ps-2 relative transition-all duration-300
+                            <p tabindex="0" class="w-4/6 h-full flex items-center justify-start text-lg ps-2 relative transition-all duration-300
                                     group-hover:ps-8 group-focus-within:ps-8" [class.bg-green-500]="item.completed"
                                 [class.bg-opacity-10]="item.completed" [class.decoration-green-500]="item.completed"
                                 [class.decoration-3]="item.completed"
                                 [class.line-through]="item.completed">
                         
-                                <input type="checkbox" class="rounded-full checkbox absolute left-[-2.5rem] top-1/2 -translate-y-1/2 opacity-0 pointer-events-none
+                            <input type="checkbox" class="rounded-full checkbox absolute left-[-2.5rem] top-1/2 -translate-y-1/2 opacity-0 pointer-events-none
                                           group-hover:left-0 group-hover:opacity-100 group-hover:pointer-events-auto
-                                          group-focus-within:left-1 group-focus-within:opacity-100 group-focus-within:pointer-events-auto
+                                          group-focus-within:left-0 group-focus-within:opacity-100 group-focus-within:pointer-events-auto
                                           transition-all duration-300 ease-in-out" [checked]="item.completed" (change)="checkTask(item)" />
+
                                 {{ item.text }}
                             </p>
                         
                             <!-- Bottone modifica -->
-                            <div class="w-1/6 h-full flex items-center justify-center">
+                            <div class="w-2/6 h-full flex items-center justify-center ">
+                                <!-- Aggiungi btn elimina task -->
+                                <button class="px-1 m-1 text-lg bg-red-500 bg-opacity-10 rounded text-red-600 hover:bg-red-500 hover:text-red-900 transition-all duration-300" onclick="deleteTask.showModal()">
+                                    <i class="bx bx-trash"></i>
+                                </button>
+
                                 <button
-                                    class="px-2 m-1 text-lg bg-yellow-400 bg-opacity-10 rounded text-yellow-300 hover:bg-yellow-400 hover:text-yellow-900 transition-all duration-300">
+                                    class="px-1 m-1 text-lg bg-yellow-400 bg-opacity-10 rounded text-yellow-300 hover:bg-yellow-400 hover:text-yellow-900 transition-all duration-300">
                                     <i class="bxr bx-edit"></i>
                                 </button>
                             </div>
@@ -112,7 +118,7 @@
 
 
 <!-- Edit Card Modal -->
-<dialog #editCard class="modal " >
+<dialog #editCard class="modal" >
     <div class="modal-box p-2 scrollbar-hidden">
         <form method="dialog">
             <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-lg">✕</button>
@@ -149,13 +155,13 @@
                         <label>
                             <input type="radio" name="color" class="peer hidden" (change)="editCard.close();changeColor('bg-red-900')" />
                             <div
-                                class="w-16 h-11 rounded-lg border-4 border-transparent bg-red-500 peer-checked:border-white transition-all">
-                            </div>
-                        </label>
+                            class="w-16 h-11 rounded-lg border-4 border-transparent bg-red-500 peer-checked:border-white transition-all">
+                        </div>
+                    </label>
                     
-                        <!-- Arancione -->
+                    <!-- Arancione -->
                         <label>
-                            <input type="radio" name="color" class="peer hidden" (change)="editCard.close();changeColor('bg-orange-900')" />
+                            <input type="radio" name="color" class="peer hidden" (change)="editCard.close();changeColor('bg-orange-500')" />
                             <div
                                 class="w-16 h-11 rounded-lg border-4 border-transparent bg-orange-500 peer-checked:border-white transition-all">
                             </div>
@@ -163,7 +169,7 @@
                     
                         <!-- Giallo -->
                         <label>
-                            <input type="radio" name="color" class="peer hidden" (change)="editCard.close();changeColor('bg-yellow-600')" />
+                            <input type="radio" name="color" class="peer hidden" (change)="editCard.close();changeColor('bg-yellow-500')" />
                             <div
                                 class="w-16 h-11 rounded-lg border-4 border-transparent bg-yellow-500 peer-checked:border-white transition-all">
                             </div>
@@ -171,7 +177,7 @@
                     
                         <!-- Lime -->
                         <label>
-                            <input type="radio" name="color" class="peer hidden" (change)="editCard.close();changeColor('bg-lime-900')" />
+                            <input type="radio" name="color" class="peer hidden" (change)="editCard.close();changeColor('bg-lime-500')" />
                             <div
                                 class="w-16 h-11 rounded-lg border-4 border-transparent bg-lime-500 peer-checked:border-white transition-all">
                             </div>
@@ -216,33 +222,40 @@
                                 class="w-16 h-11 rounded-lg border-4 border-transparent bg-indigo-500 peer-checked:border-white transition-all">
                             </div>
                         </label>
-                    
+                        
                         <!-- Remove Color -->
                         <label
-                            class="col-span-3 w-full h-11 rounded-lg border border-gray-400 flex items-center justify-center cursor-pointer">
-                            <input type="radio" name="color" class="peer hidden" (change)="editCard.close();changeColor('')" />
-                            <div
-                                class="w-full h-full peer-checked:border-2 peer-checked:border-white transition-all rounded-lg flex items-center justify-center flex-col">
-                                <p>✕</p>
-                                <p>Remove Color</p>
-                            </div>
-                        </label>
+                        class="col-span-3 w-full h-11 rounded-lg border border-gray-400 flex items-center justify-center cursor-pointer">
+                        <input type="radio" name="color" class="peer hidden" (change)="editCard.close();changeColor('')" />
+                        <div
+                        class="w-full h-full peer-checked:border-2 peer-checked:border-white transition-all rounded-lg flex items-center justify-center flex-col">
+                        <p>✕</p>
+                        <p>Remove Color</p>
                     </div>
-
-
-                </div>
-            </li>
-        </ul>
-    </div>
+                </label>
+            </div>
+            
+            
+        </div>
+    </li>
+</ul>
+</div>
 </dialog>
 
-<!-- Edit Task Modal -->
-<dialog id="editTask" class="modal scrollbar-hidden">
+<!-- Delete Task Modal -->
+<dialog id="deleteTask" class="modal">
     <div class="modal-box">
-        <form method="dialog">
-            <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-lg">✕</button>
-        </form>
-        <h3 class="text-lg font-bold">Task!</h3>
-
+        <h3 class="text-lg font-bold">Confermi di voler eliminare questa task?</h3>
+        <p class="py-4">Una volta eliminata, non sarà più possibile recuperarla.</p>
+        <div class=" w-full flex items-center justify-center ">
+            <button class="btn btn-outline mx-1">Default</button>
+            <button class="btn btn-outline btn-error mx-1"><i class="bx bx-trash"></i>Warning</button>
+        </div>
     </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
 </dialog>
+
+
+
